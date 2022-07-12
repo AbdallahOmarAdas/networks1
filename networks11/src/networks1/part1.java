@@ -4,16 +4,62 @@
  * and open the template in the editor.
  */
 package networks1;
-
+import java.io.*;
+import java.net.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JComboBox;
+import javax.swing.JTextArea;
 /**
  *
  * @author hp
  */
-public class part1 extends javax.swing.JFrame {
-
+public class part1 extends javax.swing.JFrame implements Runnable {
+static DatagramSocket serverSocket ;
+static byte[] receiveData = new byte[1024];
+static byte[] sendData = new byte[1024];
+static DatagramPacket receivePacket;
+static String sentence ;
+static InetAddress IPAddress ;
+static int port;
+static String capitalizedSentence;
+static DatagramPacket sendPacket;
+static part1 ry ;
+static Thread ty ;
     /**
      * Creates new form part1
      */
+//public static class myRunnable {
+public void run(){
+    
+ try{
+         System.out.println("hello22");
+while(true)
+{
+  if(serverSocket==null) {
+        
+   System.out.println("hello22");
+    }
+  else {
+          System.out.println("hello2");
+   receivePacket =new DatagramPacket(receiveData, receiveData.length);
+ serverSocket.receive(receivePacket);
+ sentence = new String(receivePacket.getData());
+this.jTextAreaChat.append("receved:"+sentence+"\n");
+this.jTextFieldStatus.setText("received from:"+receivePacket.getAddress()+" ,port:"+receivePacket.getPort());
+    
+    }
+}
+    }
+catch(Exception e)
+{
+   e.printStackTrace();
+}
+}
+//}
     public part1() {
         initComponents();
     }
@@ -43,15 +89,21 @@ public class part1 extends javax.swing.JFrame {
         jButtonSend = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         jTextFieldStatus = new javax.swing.JTextField();
+        jComboBox1 = new javax.swing.JComboBox<>();
+        jButtonSend1 = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        jTextAreaChat.setEditable(false);
         jTextAreaChat.setColumns(20);
         jTextAreaChat.setRows(5);
         jScrollPane1.setViewportView(jTextAreaChat);
 
         jTextAreaToSend.setColumns(20);
         jTextAreaToSend.setRows(5);
+        jTextAreaToSend.setToolTipText("");
         jScrollPane2.setViewportView(jTextAreaToSend);
 
         jLabel1.setFont(new java.awt.Font("Segoe Print", 1, 13)); // NOI18N
@@ -67,6 +119,11 @@ public class part1 extends javax.swing.JFrame {
 
         jTextFieldLocalPort.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jTextFieldLocalPort.setForeground(new java.awt.Color(255, 0, 0));
+        jTextFieldLocalPort.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jTextFieldLocalPortFocusLost(evt);
+            }
+        });
 
         jTextFieldRemotePort.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jTextFieldRemotePort.setForeground(new java.awt.Color(0, 0, 255));
@@ -82,15 +139,43 @@ public class part1 extends javax.swing.JFrame {
         jTextFieldRemoteIP.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jTextFieldRemoteIP.setForeground(new java.awt.Color(0, 0, 255));
 
-        jButtonSend.setFont(new java.awt.Font("Segoe Script", 1, 24)); // NOI18N
+        jButtonSend.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
         jButtonSend.setForeground(new java.awt.Color(0, 255, 0));
-        jButtonSend.setText("Send");
+        jButtonSend.setText("Test button");
+        jButtonSend.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSendActionPerformed(evt);
+            }
+        });
 
         jLabel5.setFont(new java.awt.Font("Segoe Print", 1, 14)); // NOI18N
         jLabel5.setText("Status:");
 
-        jTextFieldStatus.setFont(new java.awt.Font("Segoe Print", 0, 14)); // NOI18N
+        jTextFieldStatus.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jTextFieldStatus.setEnabled(false);
+
+        jComboBox1.setFont(new java.awt.Font("Segoe Script", 1, 10)); // NOI18N
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Wi-Fi", "Ethernet", "Loopback Pseudo-Interface 1:127.0.0.1" }));
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
+
+        jButtonSend1.setFont(new java.awt.Font("Segoe Script", 1, 24)); // NOI18N
+        jButtonSend1.setForeground(new java.awt.Color(0, 255, 0));
+        jButtonSend1.setText("Send");
+        jButtonSend1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSend1ActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setFont(new java.awt.Font("Segoe Print", 1, 14)); // NOI18N
+        jLabel6.setText("Enter Text Here:");
+
+        jLabel7.setFont(new java.awt.Font("Segoe Print", 1, 12)); // NOI18N
+        jLabel7.setText("Available Interfaces:");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -98,34 +183,49 @@ public class part1 extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextFieldStatus))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 524, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextFieldLocalIP, javax.swing.GroupLayout.DEFAULT_SIZE, 144, Short.MAX_VALUE)
-                            .addComponent(jTextFieldLocalPort))
-                        .addGap(10, 10, 10))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jTextFieldStatus))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 524, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jTextFieldLocalIP, javax.swing.GroupLayout.DEFAULT_SIZE, 144, Short.MAX_VALUE)
+                                    .addComponent(jTextFieldLocalPort))
+                                .addGap(10, 10, 10))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE)
+                                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jTextFieldRemotePort)
+                                    .addComponent(jTextFieldRemoteIP))
+                                .addContainerGap())
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jComboBox1, 0, 246, Short.MAX_VALUE)
+                                .addContainerGap())
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jButtonSend1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jButtonSend, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap())
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jButtonSend, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jTextFieldRemotePort)
-                            .addComponent(jTextFieldRemoteIP))
-                        .addContainerGap())))
+                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -143,7 +243,11 @@ public class part1 extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jTextFieldLocalPort)
                             .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(60, 60, 60)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(5, 5, 5)
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jTextFieldRemoteIP)
                             .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -151,14 +255,17 @@ public class part1 extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jTextFieldRemotePort)
                             .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(26, 26, 26)
+                .addGap(5, 5, 5)
+                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)
+                    .addComponent(jButtonSend1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButtonSend, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTextFieldStatus, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE))
+                    .addComponent(jTextFieldStatus, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -180,10 +287,112 @@ public class part1 extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jButtonSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSendActionPerformed
+        // TODO add your handling code here:
+      // TODO add your handling code here:
+        try{             
+             IPAddress = InetAddress.getByName(this.jTextFieldRemoteIP.getText());
+             port = Integer.parseInt(this.jTextFieldRemotePort.getText());
+             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
+                LocalDateTime now = LocalDateTime.now();  
+               String time= dtf.format(now); 
+             capitalizedSentence ="hello    -from port:"+this.jTextFieldLocalPort.getText()+"-      "+time;
+             
+            sendData = capitalizedSentence.getBytes();
+            sendPacket =new DatagramPacket(sendData, sendData.length, IPAddress,port);
+            serverSocket.send(sendPacket);
+            this.jTextAreaChat.append("me:"+capitalizedSentence+"\n");
+            this.jTextFieldStatus.setText("sent to:"+this.jTextFieldRemoteIP.getText()+" ,port:"+this.jTextFieldRemotePort.getText());
+        }
+        catch(Exception e){
+        e.printStackTrace();
+    }
+    }//GEN-LAST:event_jButtonSendActionPerformed
+
+    private void jTextFieldLocalPortFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldLocalPortFocusLost
+        // TODO add your handling code here:
+          try{
+              InetAddress ips=InetAddress.getByName(this.jTextFieldLocalIP.getText());
+            if(serverSocket==null){
+                
+                serverSocket = new DatagramSocket(Integer.parseInt(this.jTextFieldLocalPort.getText()), ips);
+                ty = new Thread(this);
+                ty.start();
+           }
+           else{
+                ty.stop();
+                serverSocket.close();
+                serverSocket = new DatagramSocket(Integer.parseInt(this.jTextFieldLocalPort.getText()), ips);
+                ty = new Thread(this);
+                ty.start();
+                
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_jTextFieldLocalPortFocusLost
+
+    private void jButtonSend1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSend1ActionPerformed
+        // TODO add your handling code here:
+        try{             
+             IPAddress = InetAddress.getByName(this.jTextFieldRemoteIP.getText());
+             port = Integer.parseInt(this.jTextFieldRemotePort.getText());
+             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
+                LocalDateTime now = LocalDateTime.now();  
+               String time= dtf.format(now); 
+             capitalizedSentence = this.jTextAreaToSend.getText()+"    -from:"+this.jTextFieldLocalIP.getText()+" port:"+this.jTextFieldLocalPort.getText()+"-      "+time;
+             
+            sendData = capitalizedSentence.getBytes();
+            sendPacket =new DatagramPacket(sendData, sendData.length, IPAddress,port);
+            serverSocket.send(sendPacket);
+            this.jTextAreaChat.append("me:"+capitalizedSentence+"\n");
+            this.jTextFieldStatus.setText("sent to:"+this.jTextFieldRemoteIP.getText()+" ,port:"+this.jTextFieldRemotePort.getText());
+        }
+        catch(Exception e){
+        e.printStackTrace();
+    }
+    }//GEN-LAST:event_jButtonSend1ActionPerformed
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        // TODO add your handling code here:
+        if(this.jComboBox1.getSelectedIndex()==0){
+            try {
+                InetAddress ip=InetAddress.getLocalHost();
+                
+                String st[]=ip.toString().split("/");
+                //String s=new String(ip.getA);
+                this.jTextFieldLocalIP.setText(st[1]);
+               
+            } catch (UnknownHostException ex) {
+                Logger.getLogger(part1.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+        }
+        else if(this.jComboBox1.getSelectedIndex()==1){
+           try {
+                InetAddress ip=InetAddress.getLocalHost();
+                String st[]=ip.toString().split("/");
+                this.jTextFieldLocalIP.setText(st[1]);
+            } catch (UnknownHostException ex) {
+                Logger.getLogger(part1.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        else{
+             try {
+                InetAddress ip=InetAddress.getLoopbackAddress();
+                String st[]=ip.toString().split("/");
+                this.jTextFieldLocalIP.setText(st[1]);
+            } catch (Exception ex) {
+                Logger.getLogger(part1.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_jComboBox1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(String args[]) throws Exception {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -206,22 +415,25 @@ public class part1 extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(part1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
+     java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new part1().setVisible(true);
             }
         });
+   
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonSend;
+    private javax.swing.JButton jButtonSend1;
+    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
