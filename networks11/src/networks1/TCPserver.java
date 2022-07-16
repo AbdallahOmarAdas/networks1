@@ -7,12 +7,13 @@ package networks1;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import javax.swing.DefaultListModel;
 /**
  *
  * @author hp
  */
 public class TCPserver extends javax.swing.JFrame implements Runnable{
-    String clientSentence;
+     String clientSentence;
     String capitalizedSentence;
     ServerSocket welcomeSocket;    
     Socket connectionSocket;
@@ -22,38 +23,41 @@ public class TCPserver extends javax.swing.JFrame implements Runnable{
     public void run(){
         try{
             String client;
+            DefaultListModel model=new DefaultListModel();
                 
                 while(true) {
                            connectionSocket = welcomeSocket.accept();
                            inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
-                           
                            outToClient =new DataOutputStream(connectionSocket.getOutputStream());
                            clientSentence = inFromClient.readLine();
+                             
                            client=clientSentence.substring(2);
+                           String Out_put[] = client.split(",");
                            if(clientSentence.startsWith("i,")){
                                if(arr.contains(client)){
                                  
                                                                  }
                                 else{
                                         arr.add(client);
-                                      
-                                        this.jTextAreaInfo.append("login by:"+client);
+                                        this.jTextAreaInfo.append("login by:"+client+"\n");
+                                        model.addElement(Out_put[0]+", "+Out_put[1]+", "+Out_put[2]+"\n");
+                                        this.jListOnline.setModel(model);
                                     }
-                               for(int i=0;i<arr.size();i++){
-                               outToClient.writeBytes(arr.get(i));
-                           }
+                               
                                
                                                                }
-                           else{
+                           else if(clientSentence.startsWith("o,")){
                                arr.remove(client);
-                               this.jTextAreaInfo.append("logOut by:"+client);
+                               this.jTextAreaInfo.append("logOut by:"+client+"\n");
+                               model.removeElement(Out_put[0]+", "+Out_put[1]+", "+Out_put[2]+"\n");  
                               
+                                                                  }
+                         for(int i=0;i<arr.size();i++){
+                               System.out.println("outToClient");
+                                
+                               outToClient.writeBytes(arr.get(i));
+                               
                            }
-                           
-                           
-                           //capitalizedSentence = clientSentence.toUpperCase() + '\n';
-                           
-                           
                             }
         }
         catch(Exception e){
@@ -236,6 +240,7 @@ public class TCPserver extends javax.swing.JFrame implements Runnable{
         try{
             InetAddress ipser=InetAddress.getByName("127.0.0.1");
                  if(welcomeSocket==null){
+                    
                    welcomeSocket = new ServerSocket(Integer.parseInt(this.jTextFieldPort.getText()), 20,ipser );
                    Thread tr=new Thread(this);
                    tr.start();
