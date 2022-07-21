@@ -19,45 +19,81 @@ public class TCPserver extends javax.swing.JFrame implements Runnable{
     Socket connectionSocket;
     BufferedReader inFromClient;
     DataOutputStream outToClient ;
+    ArrayList <Socket> arrSocket=new ArrayList();
     ArrayList <String> arr=new ArrayList <String>();
+    String serverIP="127.0.0.1";
     public void run(){
         try{
             String client;
             DefaultListModel model=new DefaultListModel();
-                
+                          
                 while(true) {
-                           connectionSocket = welcomeSocket.accept();
+                            
+                            arrSocket.add(connectionSocket = welcomeSocket.accept());
                            inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
                            outToClient =new DataOutputStream(connectionSocket.getOutputStream());
-                           clientSentence = inFromClient.readLine();
-                             
+                           clientSentence = inFromClient.readLine();  
                            client=clientSentence.substring(2);
                            String Out_put[] = client.split(",");
                            if(clientSentence.startsWith("i,")){
                                if(arr.contains(client)){
-                                 
+//                                 String toClients="";
+//                                for(int i=0;i<arr.size();i++){
+//                                      System.out.println("outToClient");
+//                                       toClients=toClients+arr.get(i)+"&";
+//                                  }
                                                                  }
                                 else{
                                         arr.add(client);
                                         this.jTextAreaInfo.append("login by:"+client+"\n");
                                         model.addElement(Out_put[0]+", "+Out_put[1]+", "+Out_put[2]+"\n");
                                         this.jListOnline.setModel(model);
+                                        String toClients="";
+                                        for(int i=0;i<arr.size();i++){
+                                              System.out.println("outToClient");
+                                               toClients=toClients+arr.get(i)+"&";
+                                                                       }
+                                         for(int i=0;i<arrSocket.size();i++){
+                                                                                System.out.println(arrSocket.get(i).toString());
+                                                                                System.out.println("*");
+                                                                                
+                                                                                
+                                                                                     outToClient =new DataOutputStream(arrSocket.get(i).getOutputStream());
+                                                                                     outToClient.writeBytes(toClients+"\n");
+                                                                                
+                                                                               
+                                                                            }
                                     }
-                               
-                               
                                                                }
                            else if(clientSentence.startsWith("o,")){
-                               arr.remove(client);
-                               this.jTextAreaInfo.append("logOut by:"+client+"\n");
-                               model.removeElement(Out_put[0]+", "+Out_put[1]+", "+Out_put[2]+"\n");  
-                              
+                                arr.remove(client);
+                                this.jTextAreaInfo.append("logOut by:"+client+"\n");
+                                model.removeElement(Out_put[0]+", "+Out_put[1]+", "+Out_put[2]+"\n");  
+                                String toClients="";
+                                arrSocket.remove(connectionSocket);
+                                for(int i=0;i<arr.size();i++){
+                                      System.out.println("outToClient");
+                                       toClients=toClients+arr.get(i)+"&";
+                                  }
+                                for(int i=0;i<arrSocket.size();i++){
+                                                                    System.out.println(arrSocket.get(i).toString());
+                                                                    System.out.println("*");
+                                                                    outToClient =new DataOutputStream(arrSocket.get(i).getOutputStream());
+                                                                   
+                                                                                     outToClient =new DataOutputStream(arrSocket.get(i).getOutputStream());
+                                                                                     outToClient.writeBytes(toClients+"\n");
+                                                                                
+                                                                            }
+                                for(int i=0;i<arrSocket.size();i++){
+                                                                    System.out.println(arrSocket.get(i).toString());
+                                                                    System.out.println("*");
+                                                                    outToClient =new DataOutputStream(arrSocket.get(i).getOutputStream());
+                                                                   
+                                                                                     outToClient =new DataOutputStream(arrSocket.get(i).getOutputStream());
+                                                                                     outToClient.writeBytes(toClients+"\n");
+                                                                                
+                                                                            }
                                                                   }
-                         for(int i=0;i<arr.size();i++){
-                               System.out.println("outToClient");
-                                
-                               outToClient.writeBytes(arr.get(i));
-                               
-                           }
                             }
         }
         catch(Exception e){
@@ -140,26 +176,24 @@ public class TCPserver extends javax.swing.JFrame implements Runnable{
                 .addGap(55, 55, 55)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(131, 131, 131))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jButtonStart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextFieldPort, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(100, 100, 100))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(131, 131, 131))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jButtonStart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jTextFieldStatus))
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 313, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jTextFieldPort, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(100, 100, 100)))
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 313, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextFieldStatus)))
                 .addGap(27, 27, 27))
         );
         jPanel1Layout.setVerticalGroup(
@@ -202,49 +236,64 @@ public class TCPserver extends javax.swing.JFrame implements Runnable{
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         // TODO add your handling code here:
-//        if(this.jComboBox1.getSelectedIndex()==0){
-//            try {
-//                InetAddress ip=InetAddress.getLocalHost();
-//
-//                String st[]=ip.toString().split("/");
-//                //String s=new String(ip.getA);
-//                this.jTextFieldLocalIP.setText(st[1]);
-//
-//            } catch (UnknownHostException ex) {
-//                Logger.getLogger(part1.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//
-//        }
-//        else if(this.jComboBox1.getSelectedIndex()==1){
-//            try {
-//                InetAddress ip=InetAddress.getLocalHost();
-//                String st[]=ip.toString().split("/");
-//                this.jTextFieldLocalIP.setText(st[1]);
-//            } catch (UnknownHostException ex) {
-//                Logger.getLogger(part1.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
-//        else{
-//            try {
-//                InetAddress ip=InetAddress.getLoopbackAddress();
-//                String st[]=ip.toString().split("/");
-//                this.jTextFieldLocalIP.setText(st[1]);
-//            } catch (Exception ex) {
-//                Logger.getLogger(part1.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
+        if(this.jComboBox1.getSelectedIndex()==0){
+            try {
+                InetAddress ip=InetAddress.getLocalHost();
+                String st[]=ip.toString().split("/");
+                serverIP=st[1];
+            } catch (UnknownHostException ex) {
+                
+            }
+
+        }
+        else if(this.jComboBox1.getSelectedIndex()==1){
+            try {
+                InetAddress ip=InetAddress.getLocalHost();
+                String st[]=ip.toString().split("/");
+                serverIP=st[1];
+            } catch (UnknownHostException ex) {
+             
+            }
+        }
+        else{
+            try {
+                InetAddress ip=InetAddress.getLoopbackAddress();
+                String st[]=ip.toString().split("/");
+                serverIP=st[1];
+            } catch (Exception ex) {
+            }
+        }
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     private void jButtonStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonStartActionPerformed
         // TODO add your handling code here:
         try{
-            InetAddress ipser=InetAddress.getByName("127.0.0.1");
-                 if(welcomeSocket==null){
+            InetAddress ipser=InetAddress.getByName(serverIP);
+            Thread tr=new Thread(this);
+                  if(welcomeSocket==null){
                     
                    welcomeSocket = new ServerSocket(Integer.parseInt(this.jTextFieldPort.getText()), 20,ipser );
-                   Thread tr=new Thread(this);
+                   
                    tr.start();
-                 }     
+                   this.jTextFieldStatus.setText("Start Listening at port:"+this.jTextFieldPort.getText()+", Address: "+serverIP);
+                   
+                    }     
+                  else{
+                      tr.stop();
+                      for(int i=0;i<arrSocket.size();i++){
+                          outToClient =new DataOutputStream(arrSocket.get(i).getOutputStream());
+                          outToClient.writeBytes(""+"\n");
+                          arrSocket.remove(i);
+                          
+                      }
+                      
+                      welcomeSocket = new ServerSocket(Integer.parseInt(this.jTextFieldPort.getText()), 20,ipser );
+                        this.jTextFieldStatus.setText("Start Listening at port:"+this.jTextFieldPort.getText()+", Address: "+serverIP);
+                        this.jTextAreaInfo.setText("");
+                        this.jListOnline.setModel(new DefaultListModel());
+                      tr=new Thread(this);
+                      tr.start();
+                  }
         }
         catch(Exception e){
             e.printStackTrace();

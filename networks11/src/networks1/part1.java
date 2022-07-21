@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package networks1;
+import java.awt.Color;
 import java.io.*;
 import java.net.*;
 import java.time.LocalDateTime;
@@ -13,6 +14,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComboBox;
 import javax.swing.JTextArea;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 /**
  *
  * @author hp
@@ -44,11 +48,16 @@ while(true)
    System.out.println("hello22");
     }
   else {
+      StyledDocument doc =jTextAreaChat.getStyledDocument(); //Chat is the name of text area
+            Style style =jTextAreaChat.addStyle("", null);
+            StyleConstants.setBold(style, true); 
+            StyleConstants.setFontSize(style, 12);
+            StyleConstants.setForeground(style, Color.RED);
           System.out.println("hello2");
    receivePacket =new DatagramPacket(receiveData, receiveData.length);
  serverSocket.receive(receivePacket);
  sentence = new String(receivePacket.getData());
-this.jTextAreaChat.append("receved:"+sentence+"\n");
+ doc.insertString(doc.getLength(), "Rem:"+sentence+"\n", style);
 this.jTextFieldStatus.setText("received from:"+receivePacket.getAddress()+" ,port:"+receivePacket.getPort());
     
     }
@@ -74,8 +83,6 @@ catch(Exception e)
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextAreaChat = new javax.swing.JTextArea();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextAreaToSend = new javax.swing.JTextArea();
         jLabel1 = new javax.swing.JLabel();
@@ -93,13 +100,10 @@ catch(Exception e)
         jButtonSend1 = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTextAreaChat = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jTextAreaChat.setEditable(false);
-        jTextAreaChat.setColumns(20);
-        jTextAreaChat.setRows(5);
-        jScrollPane1.setViewportView(jTextAreaChat);
 
         jTextAreaToSend.setColumns(20);
         jTextAreaToSend.setRows(5);
@@ -177,6 +181,8 @@ catch(Exception e)
         jLabel7.setFont(new java.awt.Font("Segoe Print", 1, 12)); // NOI18N
         jLabel7.setText("Available Interfaces:");
 
+        jScrollPane3.setViewportView(jTextAreaChat);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -191,7 +197,7 @@ catch(Exception e)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jTextFieldStatus))
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 524, Short.MAX_VALUE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING))
+                            .addComponent(jScrollPane3))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -230,12 +236,9 @@ catch(Exception e)
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(15, 15, 15)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(43, 43, 43)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 301, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(91, 91, 91)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jTextFieldLocalIP)
                             .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -254,8 +257,9 @@ catch(Exception e)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jTextFieldRemotePort)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(5, 5, 5)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -290,18 +294,23 @@ catch(Exception e)
     private void jButtonSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSendActionPerformed
         // TODO add your handling code here:
       // TODO add your handling code here:
-        try{             
+        try{   
+            StyledDocument doc =jTextAreaChat.getStyledDocument(); //Chat is the name of text area
+            Style style =jTextAreaChat.addStyle("", null);
+            StyleConstants.setBold(style, true); 
+            StyleConstants.setFontSize(style, 12);
+            StyleConstants.setForeground(style, Color.BLUE);
              IPAddress = InetAddress.getByName(this.jTextFieldRemoteIP.getText());
              port = Integer.parseInt(this.jTextFieldRemotePort.getText());
              DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
                 LocalDateTime now = LocalDateTime.now();  
                String time= dtf.format(now); 
-             capitalizedSentence ="hello    -from port:"+this.jTextFieldLocalPort.getText()+"-      "+time;
+             capitalizedSentence ="hello    -from port:"+this.jTextFieldLocalPort.getText()+"      "+time;
              
             sendData = capitalizedSentence.getBytes();
             sendPacket =new DatagramPacket(sendData, sendData.length, IPAddress,port);
             serverSocket.send(sendPacket);
-            this.jTextAreaChat.append("me:"+capitalizedSentence+"\n");
+            doc.insertString(doc.getLength(), "me:"+capitalizedSentence+"\n", style);
             this.jTextFieldStatus.setText("sent to:"+this.jTextFieldRemoteIP.getText()+" ,port:"+this.jTextFieldRemotePort.getText());
         }
         catch(Exception e){
@@ -335,7 +344,14 @@ catch(Exception e)
 
     private void jButtonSend1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSend1ActionPerformed
         // TODO add your handling code here:
-        try{             
+        try{            
+            StyledDocument doc =jTextAreaChat.getStyledDocument(); //Chat is the name of text area
+            Style style =jTextAreaChat.addStyle("", null);
+            StyleConstants.setBold(style, true); 
+            StyleConstants.setFontSize(style, 12);
+            StyleConstants.setForeground(style, Color.BLUE);
+            
+            
              IPAddress = InetAddress.getByName(this.jTextFieldRemoteIP.getText());
              port = Integer.parseInt(this.jTextFieldRemotePort.getText());
              DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
@@ -346,7 +362,8 @@ catch(Exception e)
             sendData = capitalizedSentence.getBytes();
             sendPacket =new DatagramPacket(sendData, sendData.length, IPAddress,port);
             serverSocket.send(sendPacket);
-            this.jTextAreaChat.append("me:"+capitalizedSentence+"\n");
+             doc.insertString(doc.getLength(), "me:"+capitalizedSentence+"\n", style);
+            
             this.jTextFieldStatus.setText("sent to:"+this.jTextFieldRemoteIP.getText()+" ,port:"+this.jTextFieldRemotePort.getText());
         }
         catch(Exception e){
@@ -435,9 +452,9 @@ catch(Exception e)
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextArea jTextAreaChat;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTextPane jTextAreaChat;
     private javax.swing.JTextArea jTextAreaToSend;
     private javax.swing.JTextField jTextFieldLocalIP;
     private javax.swing.JTextField jTextFieldLocalPort;
