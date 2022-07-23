@@ -21,6 +21,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.ListModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -107,10 +108,26 @@ while(true)
     }
 }
     }
-catch(Exception e)
-{
-   e.printStackTrace();
-}
+catch(java.lang.NumberFormatException e)
+        {
+            JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "Please enter all fields in correct format","WARNING", JOptionPane.WARNING_MESSAGE);
+        }
+        catch(java.lang.IllegalArgumentException e)
+        {
+            JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "Please enter remote port in range","WARNING", JOptionPane.WARNING_MESSAGE);
+        }
+        catch(java.lang.ArrayIndexOutOfBoundsException e)
+        {
+            JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "Please enter IP address in correct format","WARNING", JOptionPane.WARNING_MESSAGE);
+        }
+        catch(java.lang.NullPointerException e)
+        {
+            JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "Please start lisning before start chat","WARNING", JOptionPane.WARNING_MESSAGE);
+        }
+        catch (Exception e)
+        {
+//            e.printStackTrace();
+        }
     
     }});
     
@@ -519,8 +536,9 @@ catch(Exception e)
          try{
             serverIP= InetAddress.getByName(this.jTextFieldServerIP.getText());
             localIP= InetAddress.getByName(this.jTextFieldLocalIP.getText());
-            clientSocket = new Socket(serverIP, Integer.parseInt(this.jTextFieldServerlPort.getText()));
-           // clientSocket = new Socket(serverIP, 1515, localIP, Integer.parseInt(this.jTextFieldLocalPort.getText()));
+            //clientSocket = new Socket(serverIP, Integer.parseInt(this.jTextFieldServerlPort.getText()));
+            //clientSocket = new Socket
+            clientSocket = new Socket(serverIP, Integer.parseInt(this.jTextFieldServerlPort.getText()), localIP, Integer.parseInt(this.jTextFieldLocalPort.getText()));
             outToServer =  new DataOutputStream(clientSocket.getOutputStream());
             inFromServer =new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             sentence ="i,"+this.jTextFieldLocalIP.getText() + "," + this.jTextFieldLocalPort.getText() + "," + this.jTextFieldUsername.getText(); 
@@ -529,8 +547,34 @@ catch(Exception e)
             x1.start();
 
 }
-  catch(Exception e){
-            e.printStackTrace();
+  catch(java.net.ConnectException e)
+        {
+            JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "Please be sure TCP server info, connection failed","WARNING", JOptionPane.WARNING_MESSAGE);
+        }
+        catch(java.net.BindException e)
+        {
+            JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "Please choose a different address,there is address already used","WARNING", JOptionPane.WARNING_MESSAGE);
+        }
+        catch(java.lang.NullPointerException e)
+        {
+            JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "Please enter User Name","WARNING", JOptionPane.WARNING_MESSAGE);
+        }
+        catch( java.lang.ArrayIndexOutOfBoundsException ee)
+        {
+            JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "Please enter Local Local address & TCP server address in correct format","WARNING", JOptionPane.WARNING_MESSAGE);
+        }
+        catch(java.lang.NumberFormatException e )
+        {
+            
+            JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "Please enter Local Local address & TCP server address in correct format","WARNING", JOptionPane.WARNING_MESSAGE);
+        }
+        catch(java.lang.IllegalArgumentException e)
+        {
+            JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "Please enter local port in range","WARNING", JOptionPane.WARNING_MESSAGE);
+        }
+        catch (Exception e)
+        {
+
         }
         
         
@@ -540,7 +584,6 @@ catch(Exception e)
     private void jButtonLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLogoutActionPerformed
         // TODO add your handling code here:
           try{x1.stop();
-             // clientSocket.close();
                 clientSocket = new Socket(serverIP, Integer.parseInt(this.jTextFieldServerlPort.getText()));
                 outToServer =  new DataOutputStream(clientSocket.getOutputStream());
                 sentence ="o,"+this.jTextFieldLocalIP.getText() + "," + this.jTextFieldLocalPort.getText() + "," + this.jTextFieldUsername.getText(); 
@@ -550,8 +593,6 @@ catch(Exception e)
                 this.jTextFieldLocalPort.setText("");
                 this.jTextFieldLocalIP.setText("");
                 this.jTextFieldUsername.setText("");
-                //clientSocket.close();
-                
                 }
                   catch(Exception e){
                             e.printStackTrace();
@@ -592,8 +633,18 @@ catch(Exception e)
             doc.insertString(doc.getLength(), "me:"+capitalizedSentence+"\n", style);
             this.jTextFieldStatus.setText("sent to:"+this.jTextFieldRemoteIP.getText()+" ,port:"+this.jTextFieldRemotePort.getText());
         }
-        catch(Exception e){
-            e.printStackTrace();
+        catch(java.lang.NumberFormatException e)
+        {
+            JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "Please enter local port in correct format","WARNING", JOptionPane.WARNING_MESSAGE);
+            
+        }
+        catch(java.net.BindException e)
+        {
+            JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "Address already in uses, please choose diffrent port","WARNING", JOptionPane.WARNING_MESSAGE);
+        }
+        catch (Exception e)
+        {
+//            e.printStackTrace();
         }
     }//GEN-LAST:event_jButtonSendActionPerformed
 

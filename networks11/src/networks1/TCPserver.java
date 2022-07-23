@@ -8,6 +8,7 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 /**
  *
  * @author hp
@@ -54,7 +55,8 @@ public class TCPserver extends javax.swing.JFrame implements Runnable{
                                                toClients=toClients+arr.get(i)+"&";
                                                                        }
                                          for(int i=0;i<arrSocket.size();i++){
-                                                                                System.out.println(arrSocket.get(i).toString());
+                                             System.out.println(arrSocket.get(i).getInetAddress().toString().replace("/","")+":"+arrSocket.get(i).getPort());
+                                                                               // System.out.println(arrSocket.get(i).toString());
                                                                                 System.out.println("*");
                                                                                 
                                                                                 
@@ -70,22 +72,13 @@ public class TCPserver extends javax.swing.JFrame implements Runnable{
                                 this.jTextAreaInfo.append("logOut by:"+client+"\n");
                                 model.removeElement(Out_put[0]+", "+Out_put[1]+", "+Out_put[2]+"\n");  
                                 String toClients="";
-                                arrSocket.remove(connectionSocket);
+                                //arrSocket.remove(connectionSocket);
                                 for(int i=0;i<arr.size();i++){
-                                      System.out.println("outToClient");
+                                     // System.out.println("outToClient");
                                        toClients=toClients+arr.get(i)+"&";
                                   }
                                 for(int i=0;i<arrSocket.size();i++){
-                                                                    System.out.println(arrSocket.get(i).toString());
-                                                                    System.out.println("*");
-                                                                    outToClient =new DataOutputStream(arrSocket.get(i).getOutputStream());
-                                                                   
-                                                                                     outToClient =new DataOutputStream(arrSocket.get(i).getOutputStream());
-                                                                                     outToClient.writeBytes(toClients+"\n");
-                                                                                
-                                                                            }
-                                for(int i=0;i<arrSocket.size();i++){
-                                                                    System.out.println(arrSocket.get(i).toString());
+                                                                    System.out.println(arrSocket.get(i).getInetAddress().toString().replace("/","")+":"+arrSocket.get(i).getPort());
                                                                     System.out.println("*");
                                                                     outToClient =new DataOutputStream(arrSocket.get(i).getOutputStream());
                                                                    
@@ -294,6 +287,23 @@ public class TCPserver extends javax.swing.JFrame implements Runnable{
                       tr=new Thread(this);
                       tr.start();
                   }
+        }
+        catch(java.lang.NumberFormatException e)
+        {
+           
+            JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "please enter port number for server in correct format","WARNING", JOptionPane.WARNING_MESSAGE);
+            
+        }
+        catch(java.lang.NullPointerException e)
+        {
+            
+            JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "please enter port number for server in correct format","WARNING", JOptionPane.WARNING_MESSAGE);
+            
+        }
+        catch(java.net.BindException e)
+        {
+            
+            JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), "Address already in uses, please choose diffrent port","WARNING", JOptionPane.WARNING_MESSAGE);
         }
         catch(Exception e){
             e.printStackTrace();
